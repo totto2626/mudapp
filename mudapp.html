@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ムダップ（MUDAPP）</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0; /* 全体的に明るいグレーの背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            overflow: hidden; /* スクロールバーを非表示 */
+        }
+        .container {
+            background-color: #ffffff; /* 白いカード背景 */
+            border-radius: 1.5rem; /* 角をさらに丸く */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* 影を強化 */
+            width: 100%;
+            max-width: 420px; /* スマートフォンにフィットする最大幅 */
+            padding: 2.5rem 1.5rem; /* パディングを増やす */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem; /* 要素間のスペース */
+            transition: all 0.3s ease-in-out; /* 全体のトランジション */
+        }
+
+        /* 無駄ボタンのスタイル */
+        #uselessButton {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            font-size: 1.8rem; /* フォントサイズを大きく */
+            font-weight: 700; /* 太字 */
+            color: #ffffff;
+            background-color: #ef4444; /* 赤系のボタン */
+            border: none;
+            border-radius: 1.5rem; /* 丸みを強調 */
+            box-shadow: 0 8px 0 #dc2626; /* 立体的なボタンの影 */
+            cursor: pointer;
+            outline: none;
+            transition: all 0.1s ease-in-out; /* 押した時のアニメーション */
+            letter-spacing: 0.05em; /* 文字間隔を少し広げる */
+        }
+
+        #uselessButton:active {
+            transform: translateY(4px); /* 押した時に少し沈む */
+            box-shadow: 0 4px 0 #dc2626;
+        }
+
+        /* セリフ表示エリアのスタイル */
+        #dialogueDisplay {
+            min-height: 8rem; /* 高さを確保してレイアウトの崩れを防ぐ */
+            background-color: #f9fafb; /* 背景色 */
+            border: 1px solid #e5e7eb; /* 枠線 */
+            border-radius: 0.75rem; /* 角を丸く */
+            padding: 1rem 1.25rem;
+            font-size: 1.2rem; /* 少し大きく */
+            color: #374151; /* 濃いめのグレー */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.6;
+            transition: opacity 0.3s ease-in-out;
+            width: 100%; /* 幅いっぱいに広げる */
+        }
+
+        /* 音声選択のスタイル */
+        .voice-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        .voice-control label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        .voice-control select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            font-size: 1rem;
+            color: #374151;
+            appearance: none; /* デフォルトの矢印を非表示 */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.9L146.2%20208.6%205.4%2069.9z%22%2F%3E%3C%2Fsvg%3E'); /* カスタム矢印 */
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 0.8em;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .voice-control select:focus {
+            outline: none;
+            border-color: #3b82f6; /* フォーカス時の色 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* レスポンシブデザインの調整 */
+        @media (max-width: 640px) {
+            .container {
+                padding: 2rem 1rem; /* スマホではパディングを少し減らす */
+                gap: 1.25rem;
+            }
+            #uselessButton {
+                font-size: 1.5rem; /* スマホではフォントサイズを調整 */
+                padding: 1.2rem 1.5rem;
+            }
+            #dialogueDisplay {
+                font-size: 1rem; /* スマホではフォントサイズを調整 */
+                min-height: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">🌀 ムダップ</h1>
+        <p class="text-sm text-gray-500 mb-6">今世で一番無駄なアプリ</p>
+
+        <button id="uselessButton">押しても無駄だよ</button>
+
+        <div id="dialogueDisplay" class="flex items-center justify-center p-4 bg-gray-50 rounded-xl text-gray-700 text-lg font-medium text-center shadow-inner">
+            ここに無駄セリフが表示されます。
+        </div>
+
+        <div class="voice-control">
+            <label for="voiceSelect">音声トーンを選択：</label>
+            <select id="voiceSelect">
+                <!-- JavaScriptでオプションが追加されます -->
+            </select>
+        </div>
+    </div>
+
+    <script>
+        // 無駄セリフの配列
+        const uselessDialogues = [
+            "おめでとう。時間の浪費に成功しました。",
+            "このボタンを押した時間、もう戻ってきません。",
+            "今のあなたに必要なのは、水でも栄養でもなく、この無。",
+            "押したことに関して、特に感想はありません。",
+            "あなたの指が動いた。ただそれだけの出来事です。",
+            "それ、今やる必要ありました？",
+            "この言葉に意味を探した時点で、負けです。",
+            "無駄なこと、ちゃんとできててえらい。",
+            "ここで得られるのは“虚無力”です。育てていきましょう。",
+            "やることがないなら、このアプリを閉じても問題ありません。"
+        ];
+
+        // 各種DOM要素の取得
+        const uselessButton = document.getElementById('uselessButton');
+        const dialogueDisplay = document.getElementById('dialogueDisplay');
+        const voiceSelect = document.getElementById('voiceSelect');
+
+        let synth = window.speechSynthesis; // 音声合成APIのインスタンス
+        let voices = []; // 利用可能な音声のリスト
+
+        // 音声の読み込みと選択肢の生成
+        function populateVoiceList() {
+            voices = synth.getVoices().filter(voice => voice.lang.startsWith('ja-')); // 日本語の音声のみをフィルタリング
+            voiceSelect.innerHTML = ''; // 既存の選択肢をクリア
+
+            if (voices.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = '日本語の音声が利用できません';
+                option.disabled = true;
+                voiceSelect.appendChild(option);
+                console.warn('日本語の音声が利用できません。ブラウザの設定を確認してください。');
+                return;
+            }
+
+            // デフォルトの音声として、名前で優先順位を付けて選択
+            // 'Kyoko', 'Google 日本語', 'Otoya', 'Mei' などを優先
+            const preferredVoices = ['Kyoko', 'Google 日本語', 'Otoya', 'Mei'];
+            let defaultVoiceIndex = 0; // fallback to the first available voice
+
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.textContent = voice.name + ' (' + voice.lang + ')';
+                option.value = voice.name;
+                voiceSelect.appendChild(option);
+
+                // 優先音声があればデフォルトとして選択
+                if (preferredVoices.includes(voice.name)) {
+                    defaultVoiceIndex = index;
+                }
+            });
+
+            // デフォルトの音声を選択
+            voiceSelect.selectedIndex = defaultVoiceIndex;
+        }
+
+        // 音声が利用可能になったときに選択肢を生成
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = populateVoiceList;
+        } else {
+            // onvoiceschangedがサポートされていないブラウザ向け（非同期で読み込み）
+            populateVoiceList();
+        }
+
+        // ボタンがクリックされた時の処理
+        uselessButton.addEventListener('click', () => {
+            // 現在再生中の音声があれば停止
+            if (synth.speaking) {
+                synth.cancel();
+            }
+
+            // 無駄セリフをランダムに選択
+            const randomIndex = Math.floor(Math.random() * uselessDialogues.length);
+            const selectedDialogue = uselessDialogues[randomIndex];
+
+            // セリフを画面に表示
+            dialogueDisplay.textContent = selectedDialogue;
+
+            // 音声合成の設定
+            const utterance = new SpeechSynthesisUtterance(selectedDialogue);
+
+            // 選択された音声を設定
+            const selectedVoiceName = voiceSelect.value;
+            const selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            } else {
+                console.warn('選択された音声が見つかりません。デフォルトの音声を使用します。');
+            }
+
+            utterance.lang = 'ja-JP'; // 言語を日本語に設定
+            utterance.pitch = 1;     // ピッチ（0.0〜2.0, デフォルトは1）
+            utterance.rate = 1;      // 再生速度（0.1〜10.0, デフォルトは1）
+
+            // 音声再生
+            synth.speak(utterance);
+        });
+
+        // アプリ起動時に初期メッセージを表示
+        document.addEventListener('DOMContentLoaded', () => {
+            dialogueDisplay.textContent = "ここに無駄セリフが表示されます。";
+            // Populate voice list again to ensure it's called after voices might be loaded
+            populateVoiceList();
+        });
+
+    </script>
+</body>
+</html>
