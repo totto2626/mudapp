@@ -171,12 +171,6 @@
 
         // 音声の読み込みと選択肢の生成
         function populateVoiceList() {
-            // Check if speechSynthesis is available and has voices
-            if (!synth || !synth.getVoices().length) {
-                console.log('Web Speech API is not ready or has no voices yet.');
-                return; // Exit if voices are not ready
-            }
-
             voices = synth.getVoices().filter(voice => voice.lang.startsWith('ja-')); // 日本語の音声のみをフィルタリング
             voiceSelect.innerHTML = ''; // 既存の選択肢をクリア
 
@@ -208,38 +202,18 @@
 
             // デフォルトの音声を選択
             voiceSelect.selectedIndex = defaultVoiceIndex;
-            console.log('Voice list populated successfully.');
         }
 
         // 音声が利用可能になったときに選択肢を生成
-        // onvoiceschangedイベントは、ブラウザが音声リストをロードしたときに発火します
-        if (synth && synth.onvoiceschanged !== undefined) {
+        if (synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = populateVoiceList;
         } else {
-            // onvoiceschangedがサポートされていない、または初期ロード時に発火しないブラウザ向け
-            // タイムアウトを設けて、音声が読み込まれるまで数回試行する
-            let attempts = 0;
-            const maxAttempts = 5;
-            const interval = setInterval(() => {
-                populateVoiceList();
-                if (voices.length > 0 || attempts >= maxAttempts) {
-                    clearInterval(interval);
-                    if (attempts >= maxAttempts && voices.length === 0) {
-                        console.warn('Could not populate voice list after multiple attempts.');
-                    }
-                }
-                attempts++;
-            }, 500);
+            // onvoiceschangedがサポートされていないブラウザ向け（非同期で読み込み）
+            populateVoiceList();
         }
 
         // ボタンがクリックされた時の処理
         uselessButton.addEventListener('click', () => {
-            if (!synth) {
-                dialogueDisplay.textContent = "音声合成機能が利用できません。";
-                console.error("SpeechSynthesis API is not available.");
-                return;
-            }
-
             // 現在再生中の音声があれば停止
             if (synth.speaking) {
                 synth.cancel();
@@ -268,18 +242,14 @@
             utterance.pitch = 1;     // ピッチ（0.0〜2.0, デフォルトは1）
             utterance.rate = 1;      // 再生速度（0.1〜10.0, デフォルトは1）
 
-            try {
-                synth.speak(utterance);
-            } catch (error) {
-                dialogueDisplay.textContent = "音声の再生に失敗しました。";
-                console.error("Failed to speak:", error);
-            }
+            // 音声再生
+            synth.speak(utterance);
         });
 
-        // アプリ起動時に初期メッセージを表示し、音声リストを初期化
+        // アプリ起動時に初期メッセージを表示
         document.addEventListener('DOMContentLoaded', () => {
             dialogueDisplay.textContent = "ここに無駄セリフが表示されます。";
-            // Populate voice list on DOMContentLoaded as well, in case onvoiceschanged fires before this.
+            // Populate voice list again to ensure it's called after voices might be loaded
             populateVoiceList();
         });
 
